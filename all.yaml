@@ -1,0 +1,17 @@
+- hosts: all
+  become: yes
+  tasks:
+
+  ### Install dependencies
+  - name: Install prerequisites
+    apt: name={{item}} update_cache=yes
+    with_items:
+     - apt-transport-https
+     - ca-certificates
+     - curl
+     - software-properties-common
+  - name: Create a directory named Ubuntu if it does not exist
+    ansible.builtin.file:
+      path: /home/ubuntu/ubuntu
+      state: directory
+      mode: '0755'
