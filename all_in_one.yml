@@ -52,6 +52,7 @@
       cmd: echo "I am number two" > machine2.txt
       chdir: /home/ubuntu/ubuntu2/
 - hosts: win # host group to run the module on 
+  become: false
   tasks: 
   - name: run an executable command on a remote Windows system
     win_command: netstat -e # win_command is a Windows module.
