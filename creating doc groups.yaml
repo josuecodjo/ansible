@@ -1,0 +1,12 @@
+- hosts: ubuntu_group
+  become: yes
+  tasks:
+  - name: Create a directory named Ubuntu if it does not exist
+    ansible.builtin.file:
+      path: /home/ubuntu/ubuntu_group
+      state: directory
+      mode: '0755'
+  - name: This command will change the working directory to ubuntu_group/
+    ansible.builtin.shell:
+      cmd: echo "I am a group member" > machine_group.txt
+      chdir: /home/ubuntu/ubuntu_group/
