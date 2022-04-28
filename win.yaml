@@ -3,3 +3,7 @@
   tasks: 
   - name: run an executable command on a remote Windows system
     win_command: netstat -e # win_command is a Windows module.
+  - name: Create directory structure
+    win_file:
+      path: C:\Temp\folder\subfolder
+      state: directory
