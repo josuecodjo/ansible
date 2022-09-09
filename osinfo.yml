@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+  - name: display information
+    shell: cat /etc/os-release
+    register: command_output
+  - debug:
+      var: command_output.stdout_lines
