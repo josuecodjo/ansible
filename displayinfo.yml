@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+  - name: display informations
+    debug:
+      msg: "echo OS: {{ ansible_facts['os_family'] }} , HostName: {{ ansible_facts['hostname'] }} , Groups: {{ group_names }}"
