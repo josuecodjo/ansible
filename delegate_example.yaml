@@ -1,6 +1,6 @@
 ---
 - name: "Ansible Delegate_to examples"
-  hosts: node1
+  hosts: node1.codendeploy.lab
   tasks:
   - name: "PreTask: Display system information"
     debug:
