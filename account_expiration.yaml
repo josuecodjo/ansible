@@ -1,0 +1,51 @@
+---
+- hosts: node1.codendeploy.lab
+  vars_prompt:
+    - name: f_user
+      prompt: Enter the user last name
+      private: false
+    - name: exp_date
+      prompt: Enter the account expiry date
+      private: false
+  tasks:
+  # - name: Get all users
+  #   getent:
+  #     database: passwd
+  #     split: ':'
+
+  # - debug:
+  #     var: getent_passwd
+
+  # - name: Print the usernames
+  #   debug:
+  #     msg: "{{ getent_passwd | dict2items | map(attribute='key') | list }}"
+
+  - name: "set Account expiration date"
+    block:
+      - name: "Check that the user with name {{ f_user }} is present"
+        shell: |
+          cat /etc/passwd | grep {{ f_user }} | awk '{print $1}' | cut -d ":" -f 1
+        register: final_usr
+
+      - debug:
+          var: final_usr.stdout_lines[0]
+
+      - name: Check that the user is present
+        getent:
+          database: passwd
+          key: "{{ final_usr.stdout_lines[0] }}"
+          fail_key: true
+
+      - name: Define expiry time for user
+        become: yes
+        shell: |
+          usermod -e {{ exp_date }} {{ final_usr.stdout_lines[0] }}
+
+      - name: Checking user information
+        become: yes
+        shell: |
+          chage -l {{ final_usr.stdout_lines[0] }}
+        register: info_output
+      - debug:
+          var: info_output.stdout_lines
+    when: ansible_facts['distribution'] == 'CentOS' or ansible_facts['os_family'] != "Windows"
