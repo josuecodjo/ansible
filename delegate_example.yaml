@@ -12,13 +12,13 @@
     async: 1
     poll: 0
 
-  - name: "Task2: Enabling the port in firewall"
-    become: true
-    firewalld:
-      port: 8081/tcp
-      permanent: true
-      state: enabled
-      immediate: yes
+  # - name: "Task2: Enabling the port in firewall"
+  #   become: true
+  #   firewalld:
+  #     port: 8081/tcp
+  #     permanent: true
+  #     state: enabled
+  #     immediate: yes
       
   - name: "Task3: Check the status of the remote server from localhost [Ansible master]"
     uri:
