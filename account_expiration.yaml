@@ -65,7 +65,7 @@
     block:
       - name: "Check that the user with name {{ f_user }} is present"
         win_powershell: |
-          $found = Get-ADUser -Filter {Surname -like "$User"} -ResultSetSize:$null -ResultPageSize:1000
+          $found = Get-ADUser -Filter {Surname -like "{{ f_user }}"} -ResultSetSize:$null -ResultPageSize:1000
           echo $found.SamAccountName
         register: final_usr
 
@@ -81,4 +81,4 @@
         win_powershell: |
           Set-ADAccountExpiration -Identity "{{ final_usr.stdout_lines[0] }}" -DateTime {{ exp_date_lnx }}
         when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0)
-    when: ansible_facts['distribution'] == 'Windows' or ansible_facts['os_family'] == "Windows"
+    when: ansible_facts['os_family'] == "Windows"
