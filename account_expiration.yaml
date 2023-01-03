@@ -32,53 +32,59 @@
   #   debug:
   #     msg: "{{ getent_passwd | dict2items | map(attribute='key') | list }}"
 
-  - name: "set Account expiration date"
-    block:
-      - name: "Check that the user with name {{ f_user }} is present"
-        shell: |
-          cat /etc/passwd | grep {{ f_user }} | awk '{print $1}' | cut -d ":" -f 1
-        register: final_usr
+    ### Linux
+    - name: "Check that the user with name {{ f_user }} is present"
+      shell: |
+        cat /etc/passwd | grep {{ f_user }} | awk '{print $1}' | cut -d ":" -f 1
+      register: final_usr
+      when: ansible_facts['os_family'] != "Windows" ### or ansible_facts['distribution'] == 'CentOS'
 
-      - debug:
-          var: final_usr.stdout_lines[0]
+    - debug:
+        var: final_usr.stdout_lines[0]
+      when: ansible_facts['os_family'] != "Windows" ### or ansible_facts['distribution'] == 'CentOS'
 
-      - name: Check that the user is present
-        getent:
-          database: passwd
-          key: "{{ final_usr.stdout_lines[0] }}"
-          fail_key: true
+    - name: Check that the user is present
+      getent:
+        database: passwd
+        key: "{{ final_usr.stdout_lines[0] }}"
+        fail_key: true
+      when: ansible_facts['os_family'] != "Windows" ### or ansible_facts['distribution'] == 'CentOS'
 
-      - name: Define expiry time for user
-        become: yes
-        shell: |
-          usermod -e {{ exp_date }} {{ final_usr.stdout_lines[0] }}
+    - name: Define expiry time for user
+      become: yes
+      shell: |
+        usermod -e {{ exp_date }} {{ final_usr.stdout_lines[0] }}
+      when: ansible_facts['os_family'] != "Windows" ### or ansible_facts['distribution'] == 'CentOS'
 
-      - name: Checking user information
-        become: yes
-        shell: |
-          chage -l {{ final_usr.stdout_lines[0] }}
-        register: info_output
-      - debug:
-          var: info_output.stdout_lines
-    when: ansible_facts['distribution'] == 'CentOS' or ansible_facts['os_family'] != "Windows"
+    - name: Checking user information
+      become: yes
+      shell: |
+        chage -l {{ final_usr.stdout_lines[0] }}
+      register: info_output
+      when: ansible_facts['os_family'] != "Windows" ### or ansible_facts['distribution'] == 'CentOS'
+    - debug:
+        var: info_output.stdout_lines
+      when: ansible_facts['os_family'] != "Windows" ### or ansible_facts['distribution'] == 'CentOS'
 
-    block:
-      - name: "Check that the user with name {{ f_user }} is present"
-        win_powershell: |
-          $found = Get-ADUser -Filter {Surname -like "{{ f_user }}"} -ResultSetSize:$null -ResultPageSize:1000
-          echo $found.SamAccountName
-        register: final_usr
 
-      - debug:
-          var: final_usr.stdout_lines[0]
+    ### Windows
+    - name: "Check that the user with name {{ f_user }} is present"
+      win_shell: |
+        $found = Get-ADUser -Filter {Surname -like "{{ f_user }}"} -ResultSetSize:$null -ResultPageSize:1000
+        echo $found.SamAccountName
+      register: final_usr
+      when: ansible_facts['os_family'] == "Windows"
 
-      - name: Add user to Installation group
-        win_powershell: |
-          Add-ADGroupMember -Identity "Installation" -Members "{{ final_usr.stdout_lines[0] }}" -MemberTimeToLive (New-TimeSpan -Days {{ days_numb }})
-        when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0)
+    - debug:
+        var: final_usr.stdout_lines[0]
+      when: ansible_facts['os_family'] == "Windows"
 
-      - name: Set account expiration Date and get the newly appointed expiration date
-        win_powershell: |
-          Set-ADAccountExpiration -Identity "{{ final_usr.stdout_lines[0] }}" -DateTime "{{ exp_date_lnx }}""
-        when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0)
-    when: ansible_facts['os_family'] == "Windows"
+    - name: Add user to Installation group
+      win_shell: |
+        Add-ADGroupMember -Identity "Installation" -Members "{{ final_usr.stdout_lines[0] }}" -MemberTimeToLive (New-TimeSpan -Days {{ days_numb }})
+      when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0) and (ansible_facts['os_family'] == "Windows")
+
+    - name: Set account expiration Date and get the newly appointed expiration date
+      win_shell: |
+        Set-ADAccountExpiration -Identity "{{ final_usr.stdout_lines[0] }}" -DateTime "{{ exp_date_lnx }}"
+      when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0) and (ansible_facts['os_family'] == "Windows")
