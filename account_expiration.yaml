@@ -4,9 +4,21 @@
     - name: f_user
       prompt: Enter the user last name
       private: false
-    - name: exp_date
-      prompt: Enter the account expiry date
+    - name: exp_date_year
+      prompt: Enter the account expiry year (YYYY)
       private: false
+    - name: exp_date_month
+      prompt: Enter the account expiry month (MM)
+      private: false
+    - name: exp_date_day
+      prompt: Enter the account expiry day (DD)
+      private: false
+    - name: days_numb
+      prompt: Enter the number of days after which user account got expired
+      private: false
+  vars:
+   exp_date: "{{ exp_date_year }}-{{ exp_date_month }}-{{ exp_date_day }}"
+   exp_date_lnx: "{{ exp_date_month }}/{{ exp_date_day }}/{{ exp_date_year }}"
   tasks:
   # - name: Get all users
   #   getent:
@@ -49,3 +61,24 @@
       - debug:
           var: info_output.stdout_lines
     when: ansible_facts['distribution'] == 'CentOS' or ansible_facts['os_family'] != "Windows"
+
+    block:
+      - name: "Check that the user with name {{ f_user }} is present"
+        win_powershell: |
+          $found = Get-ADUser -Filter {Surname -like "$User"} -ResultSetSize:$null -ResultPageSize:1000
+          echo $found.SamAccountName
+        register: final_usr
+
+      - debug:
+          var: final_usr.stdout_lines[0]
+
+      - name: Add user to Installation group
+        win_powershell: |
+          Add-ADGroupMember -Identity "Installation" -Members "{{ final_usr.stdout_lines[0] }}" -MemberTimeToLive (New-TimeSpan -Days {{ days_numb }})
+        when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0)
+
+      - name: Set account expiration Date and get the newly appointed expiration date
+        win_powershell: |
+          Set-ADAccountExpiration -Identity "{{ final_usr.stdout_lines[0] }}" -DateTime {{ exp_date_lnx }}
+        when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0)
+    when: ansible_facts['distribution'] == 'Windows' or ansible_facts['os_family'] == "Windows"
