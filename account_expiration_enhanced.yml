@@ -1,0 +1,91 @@
+---
+- name: Scan through all targets
+  hosts: all
+  vars_prompt:
+    - name: f_user
+      prompt: Enter the user last name
+      private: false
+    - name: exp_date_year
+      prompt: Enter the account expiry year (YYYY)
+      private: false
+    - name: exp_date_month
+      prompt: Enter the account expiry month (MM)
+      private: false
+    - name: exp_date_day
+      prompt: Enter the account expiry day (DD)
+      private: false
+    - name: days_numb
+      prompt: Enter the number of days after which user account got expired
+      private: false
+  vars:
+   exp_date: "{{ exp_date_year }}-{{ exp_date_month }}-{{ exp_date_day }}"
+   exp_date_lnx: "{{ exp_date_month }}/{{ exp_date_day }}/{{ exp_date_year }}"
+  tasks:
+    - name: Classify hosts depending on their OS family
+      group_by:
+        key: os_{{ ansible_facts['family'] }}  # os_{{ ansible_facts['distribution'] }}
+
+- hosts: os_Debian
+  tasks:
+
+  # - name: Get all users
+  #   getent:
+  #     database: passwd
+  #     split: ':'
+
+  # - debug:
+  #     var: getent_passwd
+
+  # - name: Print the usernames
+  #   debug:
+  #     msg: "{{ getent_passwd | dict2items | map(attribute='key') | list }}"
+
+    ### Linux
+    - name: "Check that the user with name {{ f_user }} is present"
+      shell: |
+        cat /etc/passwd | grep {{ f_user }} | awk '{print $1}' | cut -d ":" -f 1
+      register: final_usr
+
+    - debug:
+        var: final_usr.stdout_lines[0]
+
+    - name: Check that the user is present
+      getent:
+        database: passwd
+        key: "{{ final_usr.stdout_lines[0] }}"
+        fail_key: true
+
+    - name: Define expiry time for user
+      become: yes
+      shell: |
+        usermod -e {{ exp_date }} {{ final_usr.stdout_lines[0] }}
+
+    - name: Checking user information
+      become: yes
+      shell: |
+        chage -l {{ final_usr.stdout_lines[0] }}
+      register: info_output
+    - debug:
+        var: info_output.stdout_lines
+
+- hosts: os_Windows
+  tasks:
+    ### Windows
+    - name: "Check that the user with name {{ f_user }} is present"
+      win_shell: |
+        $found = Get-ADUser -Filter {Surname -like "{{ f_user }}"} -ResultSetSize:$null -ResultPageSize:1000
+        echo $found.SamAccountName
+      register: final_usr
+
+    - debug:
+        var: final_usr.stdout_lines[0]
+
+    - name: Add user to Installation group
+      win_shell: |
+        Add-ADGroupMember -Identity "Installation" -Members "{{ final_usr.stdout_lines[0] }}" -MemberTimeToLive (New-TimeSpan -Days {{ days_numb }})
+      when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0)
+
+    - name: Set account expiration Date and get the newly appointed expiration date
+      win_shell: |
+        Set-ADAccountExpiration -Identity "{{ final_usr.stdout_lines[0] }}" -DateTime "{{ exp_date_lnx }}"
+      when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0)
