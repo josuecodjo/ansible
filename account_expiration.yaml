@@ -18,7 +18,7 @@
       private: false
   vars:
    exp_date: "{{ exp_date_year }}-{{ exp_date_month }}-{{ exp_date_day }}"
-   exp_date_lnx: "{{ exp_date_month }}/{{ exp_date_day }}/{{ exp_date_year }}"
+   exp_date_win: "{{ exp_date_month }}/{{ exp_date_day }}/{{ exp_date_year }}"
   tasks:
   # - name: Get all users
   #   getent:
@@ -86,5 +86,5 @@
 
     - name: Set account expiration Date and get the newly appointed expiration date
       win_shell: |
-        Set-ADAccountExpiration -Identity "{{ final_usr.stdout_lines[0] }}" -DateTime "{{ exp_date_lnx }}"
+        Set-ADAccountExpiration -Identity "{{ final_usr.stdout_lines[0] }}" -DateTime "{{ exp_date_win }}"
       when: (final_usr.stdout_lines[0] is defined) and (final_usr.stdout_lines[0]|length > 0) and (ansible_facts['os_family'] == "Windows")
