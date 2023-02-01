@@ -1,5 +1,5 @@
 ---
-- hosts: node1.codendeploy.lab
+- hosts: all
   vars_prompt:
     - name: f_user
       prompt: Enter the user last name
