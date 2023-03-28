@@ -2,13 +2,13 @@
 - name: Account creation
   hosts: all
   tasks:
-    - name: Ensure group {{ item }} exists with correct gid
+    - name: Ensure group {{ item.name }} exists with correct gid {{ item.gid }}
       become: yes
       ansible.builtin.group:
-        name: "{{ group_name }}"
+        name: "{{ item.name }}"
         state: present
-        gid: 1002
+        gid: "{{ item.gid }}"
       loop:
-        - admin
-        - qa
-        - dev
+        - { name: 'admin', gid: 1030 }
+        - { name: 'qa', gid: 1031 }
+        - { name: 'dev', gid: 1032 }

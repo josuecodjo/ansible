@@ -7,12 +7,12 @@
       ansible.builtin.user:
         name: "{{ item.name }}"
         shell: /bin/bash
-        uid: 1002
+        uid: "{{ item.uid }}"
         groups: "{{ item.groups }}"
         generate_ssh_key: yes
         ssh_key_bits: 4096
         ssh_key_file: .ssh/id_rsa
         append: yes
       loop:
-        - { name: 'storm', groups: 'admin,dev' }
-        - { name: 'stormey', groups: 'admin,qa' }
+        - { name: 'storm', groups: 'admin,dev', uid: 1005 }
+        - { name: 'stormey', groups: 'admin,qa', uid: 1006 }
