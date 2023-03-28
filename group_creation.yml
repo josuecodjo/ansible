@@ -1,0 +1,14 @@
+---
+- name: Account creation
+  hosts: all
+  tasks:
+    - name: Ensure group {{ item }} exists with correct gid
+      become: yes
+      ansible.builtin.group:
+        name: "{{ group_name }}"
+        state: present
+        gid: 1002
+      loop:
+        - admin
+        - qa
+        - dev
