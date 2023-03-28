@@ -12,3 +12,4 @@
         - { name: 'admin', gid: 1030 }
         - { name: 'qa', gid: 1031 }
         - { name: 'dev', gid: 1032 }
+        - { name: 'mf', gid: 1033 }
