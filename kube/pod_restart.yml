@@ -5,7 +5,7 @@
       msg: "echo OS: {{ ansible_facts['os_family'] }} , OS Distribution: {{ ansible_facts['distribution'] }},  HostName: {{ ansible_facts['hostname'] }} , Groups: {{ group_names }}"
 
   - name: Get nginx pod
-    shell: kubectl get pods | grep nginx
+    shell: kubectl get pods | grep nginx-
     register: pod_status
   
   - debug:
@@ -16,9 +16,6 @@
     shell: |
       kubectl get po | grep nginx- | awk '{print $1}'
     register: pod_name
-
-  - debug:
-      var: pod_name.stdout_lines
 
   - debug:
       var: pod_name.stdout
