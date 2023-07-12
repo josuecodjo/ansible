@@ -22,5 +22,11 @@
 
   - name: Restart nginx pod | restart the pod
     shell: |
-      echo {{ pod_name.stdout }} > test.txt
-      # kubectl delete po {{ pod_name.stdout }}
+      kubectl delete po {{ pod_name.stdout }}
+
+  - name: Restart nginx pod | Get the pod status
+    shell: kubectl get pods | grep nginx-
+    register: pod_state
+
+  - debug:
+      var: pod_state.stdout
