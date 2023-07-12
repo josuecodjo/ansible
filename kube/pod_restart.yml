@@ -19,3 +19,8 @@
 
   - debug:
       var: pod_name.stdout
+
+  - name: Restart nginx pod | restart the pod
+    shell: |
+      echo {{ pod_name.stdout }}
+      # kubectl delete po {{ pod_name.stdout }}
