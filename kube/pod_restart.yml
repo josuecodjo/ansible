@@ -24,6 +24,10 @@
     shell: |
       kubectl delete po {{ pod_name.stdout }}
 
+  - name: Emulate long process
+    pause:
+      seconds: 10
+      
   - name: Restart nginx pod | Get the pod status
     shell: kubectl get pods | grep nginx-
     register: pod_state
