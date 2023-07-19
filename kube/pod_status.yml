@@ -10,3 +10,19 @@
   
   - debug:
       var: pod_status.stdout_lines
+
+  - name: Get nginx logs | Get the pod name
+    shell: |
+      kubectl get po | grep nginx- | awk '{print $1}'
+    register: pod_name
+
+  - debug:
+      var: pod_name.stdout
+    
+  - name: Get nginx logs | Get the logs
+    shell: |
+      kubectl logs {{ pod_name.stdout }}
+    register: pod_log
+
+  - debug:
+      var: pod_log.stdout_lines
