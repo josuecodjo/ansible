@@ -12,4 +12,12 @@
         - { name: 'admin', gid: 1030 }
         - { name: 'qa', gid: 1031 }
         - { name: 'dev', gid: 1032 }
-        - { name: 'mf', gid: 1033 }
+
+    - name: Remove group {{ item.name }}
+      become: yes
+      ansible.builtin.group:
+        name: "{{ item.name }}"
+        state: absent
+      loop:
+        - { name: 'mf'}
+      ignore_errors: True 
