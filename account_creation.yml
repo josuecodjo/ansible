@@ -16,14 +16,15 @@
       loop:
         - { name: 'storm', groups: 'admin,dev', uid: 1005 }
         - { name: 'stormey', groups: 'admin,qa', uid: 1006 }
-        - { name: 'kablisco', groups: 'admin,qa', uid: 1006 }
+        - { name: 'kablisco', groups: 'admin,qa', uid: 1007 }
+        - { name: 'kablisco', groups: 'admin,qa', uid: 1008 }
         
-    - name: remove the user {{ item.name }}
-      become: yes
-      ansible.builtin.user:
-        name: "{{ item.name }}"
-        state: absent
-        remove: yes
-      loop:
-        - { name: 'kablisco' }
-      ignore_errors: True  
+    # - name: remove the user {{ item.name }}
+    #   become: yes
+    #   ansible.builtin.user:
+    #     name: "{{ item.name }}"
+    #     state: absent
+    #     remove: yes
+    #   loop:
+    #     - { name: 'kablisco' }
+    #   ignore_errors: True  
