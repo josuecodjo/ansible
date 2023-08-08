@@ -16,3 +16,4 @@
       loop:
         - { name: 'storm', groups: 'admin,dev', uid: 1005 }
         - { name: 'stormey', groups: 'admin,qa', uid: 1006 }
+        - { name: 'kablisco', groups: 'admin,qa', uid: 1006 }
