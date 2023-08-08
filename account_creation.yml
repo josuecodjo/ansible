@@ -2,7 +2,7 @@
 - name: Account creation
   hosts: all
   tasks:
-    - name: Add the user {{ item.name }} with a bash shell, appending the group {{ item.groups }}
+    - name: Add Internal user {{ item.name }} with a bash shell, appending the group {{ item.groups }}
       become: yes
       ansible.builtin.user:
         name: "{{ item.name }}"
@@ -17,3 +17,13 @@
         - { name: 'storm', groups: 'admin,dev', uid: 1005 }
         - { name: 'stormey', groups: 'admin,qa', uid: 1006 }
         - { name: 'kablisco', groups: 'admin,qa', uid: 1006 }
+        
+    - name: remove the user {{ item.name }}
+      become: yes
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        state: absent
+        remove: yes
+      loop:
+        - { name: 'kablisco' }
+      ignore_errors: True  
