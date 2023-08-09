@@ -12,6 +12,7 @@
         - { name: 'admin', gid: 1030 }
         - { name: 'qa', gid: 1031 }
         - { name: 'dev', gid: 1032 }
+        - { name: 'matf', gid: 1035 }
 
     - name: Remove group {{ item.name }}
       become: yes
