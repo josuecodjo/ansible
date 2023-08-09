@@ -16,7 +16,7 @@
       loop:
         - { name: 'storm', groups: 'admin,dev', uid: 1005 }
         - { name: 'stormey', groups: 'admin,qa', uid: 1006 }
-        - { name: 'mathieuf', groups: 'admin,matf', uid: 1015 }
+  
         
     - name: remove the user {{ item.name }}
       become: yes
@@ -26,4 +26,5 @@
         remove: yes
       loop:
         - { name: '' }
+        - { name: 'mathieuf', groups: 'admin,matf', uid: 1015 }
       ignore_errors: True  
