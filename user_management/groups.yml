@@ -4,44 +4,44 @@
   tasks:
 
   ######################### Default groups for all linux users #########################
-    - name: Ensure group {{ item.name }} exists with correct gid {{ item.gid }}
+    - name: Ensure group {{ item.name }} exists
       become: yes
       ansible.builtin.group:
         name: "{{ item.name }}"
         state: present
-        gid: "{{ item.gid }}"
+        # gid: "{{ item.gid }}"
       loop:
-        - { name: 'admin', gid: 1030 } # Create group titled admin and with gid 1030
-        - { name: 'qa', gid: 1031 }
-        - { name: 'dev', gid: 1032 }
+        - { name: 'admin' } # Create group titled admin and with gid 1030
+        - { name: 'qa' }
+        - { name: 'dev' }
       when: "'linux' in group_names"
 
   ######################### Master groups for all linux users #########################
-    - name: Ensure group {{ item.name }} exists with correct gid {{ item.gid }}
+    - name: Ensure group {{ item.name }} exists
       become: yes
       ansible.builtin.group:
         name: "{{ item.name }}"
         state: present
-        gid: "{{ item.gid }}"
+        # gid: "{{ item.gid }}"
       loop:
-        - { name: 'admin-master', gid: 1040 } # Create group titled admin and with gid 1030
-        - { name: 'qa-master', gid: 1041 }
-        - { name: 'dev-master', gid: 1042 }
+        - { name: 'admin-master' } # Create group titled admin and with gid 1030
+        - { name: 'qa-master' }
+        - { name: 'dev-master' }
       when: 
         - "'master' in group_names"
         - "'linux' in group_names"
 
   ######################### Nodes groups for all linux users #########################
-    - name: Ensure group {{ item.name }} exists with correct gid {{ item.gid }}
+    - name: Ensure group {{ item.name }} exists
       become: yes
       ansible.builtin.group:
         name: "{{ item.name }}"
         state: present
-        gid: "{{ item.gid }}"
+        # gid: "{{ item.gid }}"
       loop:
-        - { name: 'admin-nodes', gid: 1060 } # Create group titled admin and with gid 1030
-        - { name: 'qa-nodes', gid: 1061 }
-        - { name: 'dev-nodes', gid: 1062 }
+        - { name: 'admin-nodes' } # Create group titled admin and with gid 1030
+        - { name: 'qa-nodes' }
+        - { name: 'dev-nodes' }
       when: 
         - "'nodes' in group_names"
         - "'linux' in group_names"
