@@ -9,6 +9,7 @@
       ansible.builtin.user:
         name: "{{ item.name }}"
         shell: /bin/bash
+        password: "{{ item.password | password_hash('sha512')}}"
         uid: "{{ item.uid }}"
         groups: "{{ item.groups }}"
         generate_ssh_key: yes
@@ -16,8 +17,8 @@
         ssh_key_file: .ssh/id_rsa
         append: yes
       loop:
-        - { name: 'storm', groups: 'admin,dev', uid: 1005 } # Add a user with username storm part of the admin and dev groups with uid 1005
-        - { name: 'stormey', groups: 'admin,qa', uid: 1006 }
+        - { name: 'storm', groups: 'admin,dev', uid: 1005, password: 'Admin123456' } # Add a user with username storm part of the admin and dev groups with uid 1005
+        - { name: 'stormey', groups: 'admin,qa', uid: 1006, password: 'Admin123456' }
       when: "'linux' in group_names"
 
   ######################### Master Users #########################
@@ -26,6 +27,7 @@
       ansible.builtin.user:
         name: "{{ item.name }}"
         shell: /bin/bash
+        password: "{{ item.password | password_hash('sha512')}}"
         uid: "{{ item.uid }}"
         groups: "{{ item.groups }}"
         generate_ssh_key: yes
@@ -33,7 +35,7 @@
         ssh_key_file: .ssh/id_rsa
         append: yes
       loop:
-        - { name: 'master-user-01', groups: 'admin,dev', uid: 1010 }
+        - { name: 'master-user-01', groups: 'admin,dev', uid: 1010, password: 'Admin123456' }
       when: 
         - "'master' in group_names"
         - "'linux' in group_names"
@@ -44,6 +46,7 @@
       ansible.builtin.user:
         name: "{{ item.name }}"
         shell: /bin/bash
+        password: "{{ item.password | password_hash('sha512')}}"
         uid: "{{ item.uid }}"
         groups: "{{ item.groups }}"
         generate_ssh_key: yes
@@ -51,7 +54,7 @@
         ssh_key_file: .ssh/id_rsa
         append: yes
       loop:
-        - { name: 'nodes-user-01', groups: 'admin,dev', uid: 1020 }
+        - { name: 'nodes-user-01', groups: 'admin,dev', uid: 1020, password: 'Admin123456' }
       when: 
         - "'nodes' in group_names"
         - "'linux' in group_names"
