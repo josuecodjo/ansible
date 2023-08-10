@@ -20,7 +20,12 @@
       loop:
         - { name: 'storm', groups: 'admin,dev', password: 'Admin123456' } # Add a user with username storm part of the admin and dev groups with uid 1005
         - { name: 'stormey', groups: 'admin,qa', password: 'Admin123456' }
+      register: accounts
+      notify: force change password
       when: "'linux' in group_names"
+
+    - debug:
+        var: accounts.results
 
   ######################### Master Users #########################
     - name: Add Internal user {{ item.name }} with a bash shell, appending the group {{ item.groups }}
@@ -38,6 +43,8 @@
         append: yes
       loop:
         - { name: 'master-user-01', groups: 'admin,dev', password: 'Admin123456' }
+      register: accounts
+      notify: force change password
       when: 
         - "'master' in group_names"
         - "'linux' in group_names"
@@ -58,6 +65,8 @@
         append: yes
       loop:
         - { name: 'nodes-user-01', groups: 'admin,dev', password: 'Admin123456' }
+      register: accounts
+      notify: force change password
       when: 
         - "'nodes' in group_names"
         - "'linux' in group_names"
@@ -73,4 +82,12 @@
         - { name: '' }
       ignore_errors: True
       when: "'linux' in group_names" 
-        
+
+
+    ######################### Handlers #########################
+    - name: force change password
+      become: yes
+      shell: |
+        sudo chage -d 0 {{ item.name }}
+      when: item.changed
+      loop: "{{ accounts.results }}"
