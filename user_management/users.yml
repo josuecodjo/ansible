@@ -86,6 +86,7 @@
 
 
     ######################### Handlers #########################
+  handlers:
     - name: force change password
       become: yes
       shell: |
