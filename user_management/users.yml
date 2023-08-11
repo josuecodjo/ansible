@@ -19,8 +19,8 @@
         append: yes
       loop:
         - { name: 'storm', groups: 'admin,dev', password: 'Admin123456' } # Add a user with username storm part of the admin and dev groups with uid 1005
-      register: accounts
-      notify: force change password
+      register: accounts_def
+      notify: force change password default
       when: "'linux' in group_names"
 
     # - debug:
@@ -42,8 +42,8 @@
         append: yes
       loop:
         - { name: 'master-user-01', groups: 'admin,dev', password: 'Admin123456' }
-      register: accounts
-      notify: force change password
+      register: accounts_master
+      notify: force change password master
       when: 
         - "'master' in group_names"
         - "'linux' in group_names"
@@ -64,9 +64,8 @@
         append: yes
       loop:
         - { name: 'nodes-user-01', groups: 'admin,dev', password: 'Admin123456' }
-        - { name: 'nodes-user-02', groups: 'admin,dev', password: 'Admin123456' }
-      register: accounts
-      notify: force change password
+      register: accounts_nodes
+      notify: force change password nodes
       when: 
         - "'nodes' in group_names"
         - "'linux' in group_names"
@@ -81,15 +80,30 @@
       loop:
         - { name: '' }
         - { name: 'master-user-02', groups: 'admin,dev', password: 'Admin123456' }
+        - { name: 'nodes-user-02', groups: 'admin,dev', password: 'Admin123456' }
       ignore_errors: True
       when: "'linux' in group_names" 
 
 
     ######################### Handlers #########################
   handlers:
-    - name: force change password
+    - name: force change password default
       become: yes
       shell: |
         sudo chage -d 0 {{ item.name }}
       when: item.changed
-      loop: "{{ accounts.results }}"
+      loop: "{{ accounts_def.results }}"
+
+    - name: force change password master
+      become: yes
+      shell: |
+        sudo chage -d 0 {{ item.name }}
+      when: item.changed
+      loop: "{{ accounts_master.results }}"
+
+    - name: force change password nodes
+      become: yes
+      shell: |
+        sudo chage -d 0 {{ item.name }}
+      when: item.changed
+      loop: "{{ accounts_nodes.results }}"
