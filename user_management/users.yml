@@ -42,6 +42,7 @@
         append: yes
       loop:
         - { name: 'master-user-01', groups: 'admin,dev', password: 'Admin123456' }
+        - { name: 'master-user-02', groups: 'admin,dev', password: 'Admin123456' }
       register: accounts_master
       notify: force change password master
       when: 
@@ -64,6 +65,7 @@
         append: yes
       loop:
         - { name: 'nodes-user-01', groups: 'admin,dev', password: 'Admin123456' }
+        - { name: 'nodes-user-02', groups: 'admin,dev', password: 'Admin123456' }
       register: accounts_nodes
       notify: force change password nodes
       when: 
@@ -79,8 +81,6 @@
         remove: yes
       loop:
         - { name: '' }
-        - { name: 'master-user-02', groups: 'admin,dev', password: 'Admin123456' }
-        - { name: 'nodes-user-02', groups: 'admin,dev', password: 'Admin123456' }
       ignore_errors: True
       when: "'linux' in group_names" 
 
