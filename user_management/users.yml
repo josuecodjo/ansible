@@ -19,6 +19,7 @@
         append: yes
       loop:
         - { name: 'storm', groups: 'admin,dev', password: 'Admin123456' } # Add a user with username storm part of the admin and dev groups with uid 1005
+        - { name: 'mattm', groups: 'admin,dev', password: 'Admin123456' }
       register: accounts_def
       notify: force change password default
       when: "'linux' in group_names"
