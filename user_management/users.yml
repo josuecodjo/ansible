@@ -24,7 +24,7 @@
       when: "'linux' in group_names"
 
     - debug:
-        var: accounts.results
+        var: accounts_def.results
 
   ######################### Master Users #########################
     - name: Add Internal user {{ item.name }} with a bash shell, appending the group {{ item.groups }}
