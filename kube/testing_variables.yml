@@ -8,7 +8,7 @@
     shell: |
       touch config
       cat <<EOF > config
-      allococo
+      {{ kubeconfigfile }}
       EOF
       cat config
     register: kube_log
