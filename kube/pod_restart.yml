@@ -1,8 +1,19 @@
-- hosts: lab1
+- hosts: master
   tasks:
   - name: display informations on master node
     debug:
       msg: "echo OS: {{ ansible_facts['os_family'] }} , OS Distribution: {{ ansible_facts['distribution'] }},  HostName: {{ ansible_facts['hostname'] }} , Groups: {{ group_names }}"
+
+  - name: Kubect Installation
+    shell: |
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl
+      chmod +x ./kubectl
+      mv ./kubectl /usr/local/bin/kubectl
+      kubectl get nodes
+    register: k8s_status
+
+  - debug:
+      var: k8s_status.stdout_lines
 
   - name: Get nginx pod
     shell: kubectl get pods | grep nginx-
