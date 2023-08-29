@@ -5,9 +5,10 @@
       msg: "echo VAR: {{ kubeconfigfile }}, OS: {{ ansible_facts['os_family'] }} , OS Distribution: {{ ansible_facts['distribution'] }},  HostName: {{ ansible_facts['hostname'] }} , Groups: {{ group_names }}"
 
   - name: Kubectl Installation | Kubeconfig file 1
-    ansible.builtin.file:
+    file:
       path: ./kube/config
-      mode: '0600'
+      state: touch
+      mode: u=rw
 
   - name: Kubectl Installation | Kubeconfig file 2
     copy:
