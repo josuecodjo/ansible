@@ -9,16 +9,11 @@
       mkdir .kube
       touch .kube/config
 
-  - name: Kubectl Installation | check folder kube
-    shell: |
-      ls .kube
-    register: kube_file
-
   - name: Kubectl Installation | Kubeconfig file 2
-    copy:
-      dest: ./kube/config
-      content: |
-        {{ kubeconfigfile }}
+    shell: |
+      cat <<EOF > ./kube/config
+      {{ kubeconfigfile }}
+      EOF
 
   - name: Kubectl Installation | Check Kubeconfig file
     shell: |
