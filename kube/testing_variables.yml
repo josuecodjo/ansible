@@ -9,6 +9,13 @@
       mkdir .kube
       touch .kube/config
 
+  - name: Kubectl Installation | check folder kube
+    shell: |
+      ls .kube
+    register: kube_file
+  - debug:
+    var: kube_file.stdout_lines
+
   - name: Kubectl Installation | Kubeconfig file 2
     copy:
       dest: ./kube/config
