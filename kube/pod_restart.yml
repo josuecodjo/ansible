@@ -4,7 +4,14 @@
     debug:
       msg: "echo OS: {{ ansible_facts['os_family'] }} , OS Distribution: {{ ansible_facts['distribution'] }},  HostName: {{ ansible_facts['hostname'] }} , Groups: {{ group_names }}"
 
-  - name: Kubect Installation
+  - name: Kubectl Installation | Kubeconfig file
+    copy:
+      dest: ./kube/config
+      content: |
+        {{ kubeconfigfile }}
+      
+
+  - name: Kubectl Installation | Binaries and testing
     shell: |
       curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl
       chmod +x ./kubectl
@@ -16,7 +23,7 @@
       var: k8s_status.stdout_lines
 
   - name: Get nginx pod
-    shell: kubectl get pods | grep nginx-
+    shell: kubectl get pods -n nginx | grep nginx-
     register: pod_status
   
   - debug:
@@ -25,7 +32,7 @@
 
   - name: Restart nginx pod | Get the pod name
     shell: |
-      kubectl get po | grep nginx- | awk '{print $1}'
+      kubectl get po -n nginx | grep nginx- | awk '{print $1}'
     register: pod_name
 
   - debug:
@@ -33,14 +40,14 @@
 
   - name: Restart nginx pod | restart the pod
     shell: |
-      kubectl delete po {{ pod_name.stdout }}
+      kubectl delete po {{ pod_name.stdout }} -n nginx 
 
   - name: Emulate long process
     pause:
       seconds: 10
       
   - name: Restart nginx pod | Get the pod status
-    shell: kubectl get pods | grep nginx-
+    shell: kubectl get pods -n nginx | grep nginx-
     register: pod_state
 
   - debug:
