@@ -13,6 +13,7 @@
     shell: |
       ls .kube
     register: kube_file
+
   - debug:
     var: kube_file.stdout_lines
 
@@ -26,6 +27,7 @@
     shell: |
       cat .kube/config
     register: kube_log
+    
   - debug:
       var: kube_log.stdout_lines
       
