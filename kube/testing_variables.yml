@@ -15,4 +15,20 @@
 
   - debug:
       var: kube_log.stdout_lines
+
+  - name: Kubectl Installation | Binaries and testing
+    shell: |
+      touch config
+      cat <<EOF > config
+      {{ kubeconfigfile }}
+      EOF
+      export KUBECONFIG=config
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.28.0/bin/linux/amd64/kubectl
+      chmod +x ./kubectl
+      mv ./kubectl /usr/local/bin/kubectl
+      kubectl get nodes
+    register: k8s_status
+
+  - debug:
+      var: k8s_status.stdout_lines
       
