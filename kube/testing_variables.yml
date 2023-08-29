@@ -9,7 +9,7 @@
       mkdir .kube
       touch .kube/config
       cat <<EOF > ./kube/config
-      {{ kubeconfigfile }}
+      "{{ kubeconfigfile }}"
       EOF
       cat .kube/config
     register: kube_log
