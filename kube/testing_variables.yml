@@ -4,19 +4,13 @@
     debug:
       msg: "echo VAR: {{ kubeconfigfile }}, OS: {{ ansible_facts['os_family'] }} , OS Distribution: {{ ansible_facts['distribution'] }},  HostName: {{ ansible_facts['hostname'] }} , Groups: {{ group_names }}"
 
-  - name: Kubectl Installation | Kubeconfig file 1
+  - name: Kubectl Installation | Kubeconfig file
     shell: |
       mkdir .kube
       touch .kube/config
-
-  - name: Kubectl Installation | Kubeconfig file 2
-    shell: |
       cat <<EOF > ./kube/config
       {{ kubeconfigfile }}
       EOF
-
-  - name: Kubectl Installation | Check Kubeconfig file
-    shell: |
       cat .kube/config
     register: kube_log
 
