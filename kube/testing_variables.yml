@@ -6,12 +6,11 @@
 
   - name: Kubectl Installation | Kubeconfig file
     shell: |
-      mkdir .kube
-      touch .kube/config
-      cat <<EOF > ./kube/config
-      "{{ kubeconfigfile }}"
+      touch config
+      cat <<EOF > config
+      allococo
       EOF
-      cat .kube/config
+      cat config
     register: kube_log
 
   - debug:
