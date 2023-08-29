@@ -1,0 +1,12 @@
+- hosts: master
+  tasks:
+  - name: display informations on master node
+    debug:
+      msg: "echo VAR: {{ kubeconfigfile }}, OS: {{ ansible_facts['os_family'] }} , OS Distribution: {{ ansible_facts['distribution'] }},  HostName: {{ ansible_facts['hostname'] }} , Groups: {{ group_names }}"
+
+  - name: Kubectl Installation | Kubeconfig file
+    copy:
+      dest: ./kube/config
+      content: |
+        {{ kubeconfigfile }}
+      
